@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходные файлы\renderer">
+      <UniqueIdentifier>{f5bb1935-863d-4163-b8e2-107a447d3736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы ресурсов\Shaders">
+      <UniqueIdentifier>{8f0956ae-869d-418f-ad8e-2473be27f30b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\camera">
+      <UniqueIdentifier>{e6603812-e376-4503-900d-18040f21c747}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\input">
+      <UniqueIdentifier>{568be6af-3729-43ac-9322-65c6fc044258}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>Исходные файлы\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Исходные файлы\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>Исходные файлы\input</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="renderer.h">
+      <Filter>Исходные файлы\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Исходные файлы\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>Исходные файлы\input</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="vertex.hlsl">
+      <Filter>Файлы ресурсов\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="pixel.hlsl">
+      <Filter>Файлы ресурсов\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
