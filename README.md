@@ -1,2 +1,2 @@
 # Advanced computer graphics course
-DirectX11 graphics lab
+DirectX11 graphics lab.
