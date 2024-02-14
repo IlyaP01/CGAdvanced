@@ -123,6 +123,7 @@ Renderer::Renderer() :
      pWorldBuffer_(NULL),
      pSceneBuffer_(NULL),
      pRasterizerState_(NULL),
+     pAnnotation_(NULL),
      pCamera_(nullptr),
      pInput_(nullptr),
      width_(defaultWidth),
@@ -396,6 +397,11 @@ bool Renderer::Init(const HWND hWnd, std::shared_ptr<Camera> pCamera, std::share
      if (FAILED(result))
           return false;
 
+     result = pDeviceContext_->QueryInterface(__uuidof(pAnnotation_), reinterpret_cast<void**>(&pAnnotation_));
+     if (FAILED(result))
+          return false;
+
+
      return true;
 }
 
@@ -408,14 +414,21 @@ bool Renderer::Update()
           DirectX::XMMatrixRotationY(-static_cast<float>(angle));
      pDeviceContext_->UpdateSubresource(pWorldBuffer_, 0, NULL, &worldBuffer, 0, 0);
 
+     pAnnotation_->BeginEvent(L"Update input");
      pInput_->Update();
-     pCamera_->Update(pInput_->GetMouseState());
+     pAnnotation_->EndEvent();
 
+     pAnnotation_->BeginEvent(L"Update camera position");
+     pCamera_->Update(pInput_->GetMouseState());
+     pAnnotation_->EndEvent();
+
+     pAnnotation_->BeginEvent(L"Update scence");
      SceneBuffer sceneBuffer;
      sceneBuffer.viewProjMatrix = DirectX::XMMatrixMultiply(
           pCamera_->GetView(),
           DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PI / 3, width_ / static_cast<float>(height_), near_, far_));
      pDeviceContext_->UpdateSubresource(pSceneBuffer_, 0, NULL, &sceneBuffer, 0, 0);
+     pAnnotation_->EndEvent();
 
      return true;
 }
@@ -458,7 +471,10 @@ bool Renderer::Render()
      pDeviceContext_->VSSetConstantBuffers(0, 1, &pWorldBuffer_);
      pDeviceContext_->VSSetConstantBuffers(1, 1, &pSceneBuffer_);
      pDeviceContext_->PSSetShader(pPixelShader_, NULL, 0);
+
+     pAnnotation_->BeginEvent(L"Draw cube");
      pDeviceContext_->DrawIndexed(static_cast<UINT>(cubeIndices.size()), 0, 0);
+     pAnnotation_->EndEvent();
 
      HRESULT result = pSwapChain_->Present(0, 0);
      if (!SUCCEEDED(result))
