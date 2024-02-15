@@ -4,6 +4,7 @@
 #include "input.h"
 
 #include <d3d11.h>
+#include <d3d11_1.h>
 #include <dxgi.h>
 #include <windows.h>
 #include <array>
@@ -46,6 +47,7 @@ private:
      ID3D11Buffer *pWorldBuffer_;
      ID3D11Buffer *pSceneBuffer_;
      ID3D11RasterizerState *pRasterizerState_;
+     ID3DUserDefinedAnnotation* pAnnotation_;
 
      std::shared_ptr<Camera> pCamera_;
      std::shared_ptr<Input> pInput_;
