@@ -14,7 +14,7 @@ struct PSInput
 
 cbuffer CBuf
 {
-	float averageLumen;
+	float4 averageLumen;
 };
 
 float3 Uncharted2Tonemap(float3 x)
@@ -31,8 +31,8 @@ float3 Uncharted2Tonemap(float3 x)
 
 float getExposition()
 {
-	float keyValue = 1.03f - 2.0f / (2.0f + log10(averageLumen + 1));
-	return keyValue / (max(min(averageLumen, lumMax), lumMin));
+	float keyValue = 1.03f - 2.0f / (2.0f + log10(averageLumen.x + 1));
+	return keyValue / (max(min(averageLumen.x, lumMax), lumMin));
 }
 
 float4 main(PSInput i) : SV_Target

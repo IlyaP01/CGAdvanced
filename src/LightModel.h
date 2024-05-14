@@ -85,6 +85,6 @@ private:
 
 	struct HDRConstantBuffer
 	{
-		float averageLumen;
+		DirectX::XMFLOAT4 averageLumen;
 	};
 };

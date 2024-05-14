@@ -132,6 +132,8 @@ void LightModel::applyTonemapEffect(
 	pAnnotation->BeginEvent(L"CalculateAverageBrightness");
 	
 	pContext->PSSetShader(m_PSBrightness.Get(), nullptr, 0u);
+	if (m_scaledHDRTargets.size() == 0)
+		m_scaledHDRTargets.resize(1);// ??? invalid subcription
 	processTexture(inputRTT, m_scaledHDRTargets[0], pDevice, pContext);
 
 	pContext->PSSetShader(m_PSCopy.Get(), nullptr, 0u);
@@ -156,7 +158,7 @@ void LightModel::applyTonemapEffect(
 	pAnnotation->BeginEvent(L"RenderTonemapView");
 	pContext->PSSetShader(m_PSHdr.Get(), nullptr, 0u);
 
-	const HDRConstantBuffer hdrcb = { m_prevExposure };
+	const HDRConstantBuffer hdrcb = { { m_prevExposure, 0.f, 0.f, 0.f } };
 	D3D11_BUFFER_DESC hdrcbDesc = { 0 };
 	hdrcbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	hdrcbDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -184,7 +186,9 @@ void LightModel::processTexture(
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
-	pContext->PSSetShaderResources(0u, 1u, pSRV);
+	//pContext->PSSetShaderResources(0u, 1u, pSRV);
+
+	pContext->OMSetRenderTargets(0, nullptr, nullptr);
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	inputTex->setAsResource(pDevice, pContext);
@@ -193,7 +197,7 @@ void LightModel::processTexture(
 
 	m_pScreenQuad->setVS(pDevice, pContext);
 	m_pScreenQuad->render(pDevice, pContext);
-	pContext->PSSetShaderResources(0u, 1u, pSRV);
+	//pContext->PSSetShaderResources(0u, 1u, pSRV);
 }
 
 // TODO: move to shader class 

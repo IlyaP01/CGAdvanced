@@ -153,6 +153,8 @@ void Graphics::DrawTest(Camera const& viewCamera, float angle, float x, float y)
 void Graphics::DrawScene(Scene& scene, Camera const& camera, LightModel& lightModel)
 {
 	startEvent(L"DrawScene");
+	m_sceneRenderTarget->set(m_pDevice, m_pContext);
+ 	
 	lightModel.update(m_pDevice, m_pContext);
 	scene.update(m_pDevice, m_pContext);
 	setCamera(camera);
@@ -160,7 +162,6 @@ void Graphics::DrawScene(Scene& scene, Camera const& camera, LightModel& lightMo
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
-	m_sceneRenderTarget->set(m_pDevice, m_pContext);
 	
 	scene.render(m_pDevice, m_pContext);
 	lightModel.applyTonemapEffect(m_pDevice, m_pContext, m_pAnnotation, m_sceneRenderTarget, m_postprocessedRenderTarget);
@@ -197,7 +198,7 @@ void Graphics::setCamera(Camera const& camera)
 	D3D11_BUFFER_DESC cbd = { 0 };
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbd.MiscFlags = 0u;
 	cbd.ByteWidth = sizeof(cb);
 	cbd.StructureByteStride = 0u;
