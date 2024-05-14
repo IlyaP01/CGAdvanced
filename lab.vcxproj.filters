@@ -77,15 +77,24 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
+    <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\BrightnessShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\CopyPixelShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\HDRShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
     <FxCompile Include="src\PixelShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\VertexShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-    <None Include=".gitignore" />
   </ItemGroup>
 </Project>
