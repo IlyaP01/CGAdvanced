@@ -16,7 +16,7 @@ void LightModel::addPointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR col
 
 void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
-	if (m_PSSimple == nullptr || m_PSBrightness == nullptr || m_PSCopy == nullptr || m_PSHdr == nullptr)
+	if (m_pPointLightBuffer == nullptr || m_PSSimple == nullptr || m_PSBrightness == nullptr || m_PSCopy == nullptr || m_PSHdr == nullptr)
 		initResurce(pDevice, pContext);
 	else
 	{
@@ -38,69 +38,77 @@ void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mic
 
 void LightModel::initResurce(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
-	D3D11_BUFFER_DESC lightBufferDesc = { 0 };
-	lightBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	lightBufferDesc.ByteWidth = sizeof(PointLightBuffer);
-	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	lightBufferDesc.CPUAccessFlags = 0;
-	lightBufferDesc.MiscFlags = 0;
-	lightBufferDesc.StructureByteStride = 0;
+	if (!m_pPointLightBuffer)
+	{
+		D3D11_BUFFER_DESC lightBufferDesc = { 0 };
+		lightBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		lightBufferDesc.ByteWidth = sizeof(PointLightBuffer);
+		lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		lightBufferDesc.CPUAccessFlags = 0;
+		lightBufferDesc.MiscFlags = 0;
+		lightBufferDesc.StructureByteStride = 0;
 
-	PointLightBuffer lightBuffer = {};
-	lightBuffer.numPLights.x = (UINT)m_pointLights.size();
-	memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
+		PointLightBuffer lightBuffer = {};
+		lightBuffer.numPLights.x = (UINT)m_pointLights.size();
+		memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
 
-	D3D11_SUBRESOURCE_DATA lightBufferData = {};
-	lightBufferData.pSysMem = &lightBuffer;
-	lightBufferData.SysMemPitch = 0;
-	lightBufferData.SysMemSlicePitch = 0;
+		D3D11_SUBRESOURCE_DATA lightBufferData = {};
+		lightBufferData.pSysMem = &lightBuffer;
+		lightBufferData.SysMemPitch = 0;
+		lightBufferData.SysMemSlicePitch = 0;
 
-	THROW_IF_FAILED(BaseException, pDevice->CreateBuffer(&lightBufferDesc, &lightBufferData, &m_pPointLightBuffer));
+		THROW_IF_FAILED(BaseException, pDevice->CreateBuffer(&lightBufferDesc, &lightBufferData, &m_pPointLightBuffer));
+	}
 
 	// create pixel shaders
-	m_PSSimple = createPixelShader(m_psSimplePath, pDevice);
-	m_PSBrightness = createPixelShader(m_psBrightnessPath, pDevice);
-	m_PSCopy = createPixelShader(m_psCopyPath, pDevice);
-	m_PSHdr = createPixelShader(m_psHdrPath, pDevice);
+	if (!m_PSSimple) m_PSSimple = createPixelShader(m_psSimplePath, pDevice);
+	if (!m_PSBrightness) m_PSBrightness = createPixelShader(m_psBrightnessPath, pDevice);
+	if (!m_PSCopy) m_PSCopy = createPixelShader(m_psCopyPath, pDevice);
+	if (!m_PSHdr) m_PSHdr = createPixelShader(m_psHdrPath, pDevice);
 
-	// create cpu average lumen texture 
-	D3D11_TEXTURE2D_DESC td;
-	ZeroMemory(&td, sizeof(td));
-	td.Width = 1;
-	td.Height = 1;
-	td.MipLevels = 1;
-	td.ArraySize = 1;
-	td.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	td.SampleDesc.Count = 1;
-	td.SampleDesc.Quality = 0;
-	td.Usage = D3D11_USAGE_STAGING;
-	td.BindFlags = 0;
-	td.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	THROW_IF_FAILED(BaseException, pDevice->CreateTexture2D(&td, nullptr, &m_pAverageLumenCPUTexture));
-	
-	D3D11_VIEWPORT vp = { 0 };
-	unsigned vpNum = 1;
-	pContext->RSGetViewports(&vpNum, &vp);
-	createDownsamplingRTT((int)vp.Width, (int)vp.Height, pDevice, pContext);
+	if (!m_pAverageLumenCPUTexture)
+	{
+		// create cpu average lumen texture 
+		D3D11_TEXTURE2D_DESC td;
+		ZeroMemory(&td, sizeof(td));
+		td.Width = 1;
+		td.Height = 1;
+		td.MipLevels = 1;
+		td.ArraySize = 1;
+		td.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		td.SampleDesc.Count = 1;
+		td.SampleDesc.Quality = 0;
+		td.Usage = D3D11_USAGE_STAGING;
+		td.BindFlags = 0;
+		td.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		THROW_IF_FAILED(BaseException, pDevice->CreateTexture2D(&td, nullptr, &m_pAverageLumenCPUTexture));
 
+		D3D11_VIEWPORT vp = { 0 };
+		unsigned vpNum = 1;
+		pContext->RSGetViewports(&vpNum, &vp);
+		createDownsamplingRTT((int)vp.Width, (int)vp.Height, pDevice, pContext);
+	}
 	// create texture samplers for downsampling process
-	D3D11_SAMPLER_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sd.MipLODBias = 0.0f;
-	sd.MaxAnisotropy = 1;
-	sd.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sd.BorderColor[0] = 0;
-	sd.BorderColor[1] = 0;
-	sd.BorderColor[2] = 0;
-	sd.BorderColor[3] = 0;
-	sd.MinLOD = 0;
-	sd.MaxLOD = D3D11_FLOAT32_MAX;
+	if (!m_pSamplerState)
+	{
+		D3D11_SAMPLER_DESC sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		sd.MipLODBias = 0.0f;
+		sd.MaxAnisotropy = 1;
+		sd.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		sd.BorderColor[0] = 0;
+		sd.BorderColor[1] = 0;
+		sd.BorderColor[2] = 0;
+		sd.BorderColor[3] = 0;
+		sd.MinLOD = 0;
+		sd.MaxLOD = D3D11_FLOAT32_MAX;
 
-	pDevice->CreateSamplerState(&sd, m_pSamplerState.GetAddressOf());
+		pDevice->CreateSamplerState(&sd, m_pSamplerState.GetAddressOf());
+	}
 }
 
 void LightModel::createDownsamplingRTT(
@@ -140,6 +148,7 @@ void LightModel::applyTonemapEffect(
 	for (size_t i = 1; i < m_scaledHDRTargets.size(); i++)
 		processTexture(m_scaledHDRTargets[i - 1], m_scaledHDRTargets[i], pDevice, pContext);
 
+	pContext->OMSetRenderTargets(0, nullptr, nullptr);
 	resultRTT->set(pDevice, pContext);
 
 	D3D11_MAPPED_SUBRESOURCE averageTextureData;
@@ -150,7 +159,9 @@ void LightModel::applyTonemapEffect(
 	float averageLogBrightness = std::exp(*(float*)averageTextureData.pData) - 1.0f;
 	pContext->Unmap(m_pAverageLumenCPUTexture.Get(), 0u);
 	
-	m_prevExposure = averageLogBrightness;
+
+	float expGain = (1 - std::exp(-m_timer.Mark() / m_eyeAdaptationS));
+	m_prevExposure += (averageLogBrightness - m_prevExposure) * expGain;
 
 	pAnnotation->EndEvent(); // CalculateAverageBrightness
 
@@ -177,6 +188,12 @@ void LightModel::applyTonemapEffect(
 	processTexture(inputRTT, resultRTT, pDevice, pContext);
 	
 	pAnnotation->EndEvent(); // RenderTonemapView
+}
+
+void LightModel::clearLights()
+{
+	m_pointLights = {};
+	m_pPointLightBuffer.Reset();
 }
 
 void LightModel::processTexture(

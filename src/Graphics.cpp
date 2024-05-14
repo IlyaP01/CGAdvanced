@@ -153,6 +153,8 @@ void Graphics::DrawTest(Camera const& viewCamera, float angle, float x, float y)
 void Graphics::DrawScene(Scene& scene, Camera const& camera, LightModel& lightModel)
 {
 	startEvent(L"DrawScene");
+	ID3D11ShaderResourceView* nullSRV = nullptr;
+	m_pContext->PSSetShaderResources(0, 1, &nullSRV);
 	m_sceneRenderTarget->set(m_pDevice, m_pContext);
  	
 	lightModel.update(m_pDevice, m_pContext);

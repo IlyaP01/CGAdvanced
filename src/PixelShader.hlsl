@@ -1,5 +1,13 @@
 static const uint maxPLights = 3;
 
+struct VSOut
+{
+    float3 color : Color;
+    float4 pos : SV_Position;
+    float4 norm : Normal;
+    float4 wPos : Position1;
+};
+
 struct PointLight
 {
 	float4 pos;
@@ -13,8 +21,23 @@ cbuffer PointLightsBuffer : register(b0)
 	PointLight lights[maxPLights];
 };
 
-float4 main(float3 color : Color, float4 pos : SV_Position) : SV_Target
+float4 main(VSOut vs_out) : SV_Target
 {
-	PointLight light1 = lights[0];
-	return float4( color / 3 + light1.col.xyz / plbLenght.r,1.0f );
+    float3 resultColor = vs_out.color;
+
+    for (uint i = 0; i < plbLenght.r; ++i)
+    {
+        float3 dirToLight = lights[i].pos.xyz - vs_out.wPos.xyz;
+        float lengthToLight2 = dot(dirToLight, dirToLight);
+        float lengthToLight = sqrt(lengthToLight2);
+
+        float attenuation = 1 / (1 + lengthToLight + lengthToLight2);
+
+        float3 lightInpact = attenuation * saturate(dot(dirToLight / lengthToLight, vs_out.norm.xyz)) * lights[i].col.xyz;
+        lightInpact *= lights[i].bsf.r;
+
+        resultColor += lightInpact;
+    }
+
+    return float4(resultColor, 1.0f);
 }

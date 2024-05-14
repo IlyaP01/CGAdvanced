@@ -6,6 +6,7 @@
 #include "WinDef.h"
 #include "ScreenQuad.h"
 #include "RenderTargetTexture.h"
+#include "Timer.h"
 
 class LightModel
 {
@@ -25,6 +26,8 @@ public:
 		Microsoft::WRL::ComPtr<ID3DUserDefinedAnnotation> const& pAnnotation,
 		std::shared_ptr<RenderTargetTexture> inputRTT,
 		std::shared_ptr<RenderTargetTexture> resultRTT);
+
+	void clearLights();
 
 private:
 	
@@ -67,6 +70,8 @@ private:
 	int m_maxTextureWidth;
 	int m_maxTextureHeight;
 	float m_prevExposure = 0;
+	Timer m_timer;
+	const float m_eyeAdaptationS = .5f;
 	
 	struct PointLight
 	{

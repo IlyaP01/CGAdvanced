@@ -43,5 +43,5 @@ float4 main(PSInput i) : SV_Target
 	float3 toneMappedCol = Uncharted2Tonemap(color * E);
 	float3 whiteScale = 1.0f / Uncharted2Tonemap(WhiteLumen);
 
-	return float4(pow(toneMappedCol * whiteScale, 1.0f/2.2f), 1.0f);
+	return float4(pow(abs(toneMappedCol * whiteScale), 1.0f/2.2f), 1.0f);
 }

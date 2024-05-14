@@ -67,6 +67,12 @@
     <ClCompile Include="src\LightModel.cpp">
       <Filter>src\light</Filter>
     </ClCompile>
+    <ClCompile Include="src\RenderTargetTexture.cpp">
+      <Filter>src\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScreenQuad.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App.h">
@@ -110,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="src\LightModel.h">
       <Filter>src\light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ScreenQuad.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderTargetTexture.h">
+      <Filter>src\gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

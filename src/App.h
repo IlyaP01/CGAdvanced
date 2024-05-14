@@ -13,10 +13,11 @@ public:
 	int Go();
 private:
 	void DoFrame();
+	void updateLight();
 private:
-	Window wnd;
-	Timer timer;
-	Camera camera;
-	Scene scene;
-	LightModel lightModel;
+	Window m_wnd;
+	Timer m_timer;
+	Camera m_camera;
+	Scene m_scene;
+	LightModel m_lightModel;
 };

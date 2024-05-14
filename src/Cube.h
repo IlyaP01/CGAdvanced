@@ -22,27 +22,27 @@ private:
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVIndexBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> m_pNoramlBuffer;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> m_pNIndexBuffer;
 
 
 	struct Vertex
 	{
-		struct
-		{
-			float x;
-			float y;
-			float z;
-		} pos;
-		struct
+		DX::XMFLOAT3 pos;
+		/*struct
 		{
 			unsigned char r;
 			unsigned char g;
 			unsigned char b;
 			unsigned char a;
-		} color;
+		} color;*/
+		DX::XMFLOAT3 norm;
 	};
-	std::vector<Vertex> m_vertices;
-	std::vector<unsigned short> m_indices;
+	std::vector<DX::XMFLOAT3> m_vertices;
+	std::vector<unsigned short> m_vIndices;
+	std::vector<DX::XMFLOAT3> m_normals;
+	std::vector<unsigned short> m_nIndeces;
 	DX::XMVECTOR m_position;
 };

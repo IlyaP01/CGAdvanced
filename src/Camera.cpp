@@ -23,9 +23,9 @@ void Camera::Move(Keyboard const& kbd, float dt)
 		return;
 
 	DX::XMVECTOR shift = DX::XMVectorSet(
-		((float)kbd.KeyIsPressed('D') - (float)kbd.KeyIsPressed('A')) * dt,
+		((float)kbd.KeyIsPressed('D') - (float)kbd.KeyIsPressed('A')) * dt * 3,
 		0.f,
-		((float)kbd.KeyIsPressed('W') - (float)kbd.KeyIsPressed('S')) * dt,
+		((float)kbd.KeyIsPressed('W') - (float)kbd.KeyIsPressed('S')) * dt * 3,
 		0.f);
 	auto viewShift = DX::XMVector4Transform(shift, DX::XMMatrixInverse(nullptr, getView()));
 	m_pos = DX::XMVectorAdd(m_pos, viewShift);
@@ -52,4 +52,3 @@ DX::XMMATRIX Camera::getView() const
 {
 	return DX::XMMatrixLookAtLH(m_pos, m_target, m_up);
 }
-

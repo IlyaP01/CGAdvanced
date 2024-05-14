@@ -71,6 +71,8 @@ void ScreenQuad::setVS(
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
+	if (m_pVertexBuffer == nullptr || m_pIndexBuffer == nullptr)
+		initResurce(pDevice, pContext);
 	pContext->VSSetShader(m_VSCopy.Get(), nullptr, 0u);
 	pContext->IASetInputLayout(m_pProcessTextureLayout.Get());
 }
