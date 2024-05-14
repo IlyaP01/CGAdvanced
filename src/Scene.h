@@ -11,6 +11,9 @@ public:
 	void addDrawable(argsT... params);
 	//void addLight();
 	void clear();
+	void update(
+		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
+		Microsoft::WRL::ComPtr < ID3D11DeviceContext> const& pContext);
 	void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr < ID3D11DeviceContext> const&  pContext);
@@ -22,6 +25,7 @@ private:
 
 	std::vector<std::shared_ptr<Drawable>> m_objects;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVertexShader;
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout;
 	static constexpr wchar_t const * const m_vsPath = L"VertexShader.cso";
 };
 

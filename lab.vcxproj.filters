@@ -132,5 +132,8 @@
     <FxCompile Include="src\VertexShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
+    <FxCompile Include="src\CopyVertexShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
