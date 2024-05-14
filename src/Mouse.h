@@ -78,6 +78,7 @@ public:
 	Mouse( const Mouse& ) = delete;
 	Mouse& operator=( const Mouse& ) = delete;
 	std::pair<int,int> GetPos() const noexcept;
+	std::pair<int, int> getShift() const noexcept;
 	int GetPosX() const noexcept;
 	int GetPosY() const noexcept;
 	bool IsInWindow() const noexcept;
@@ -103,8 +104,11 @@ private:
 	void OnWheelDelta( int x,int y,int delta ) noexcept;
 private:
 	static constexpr unsigned int bufferSize = 16u;
-	int x;
-	int y;
+	struct {
+		int x = 0, y = 0;
+	}shift;
+	int x = 0;
+	int y = 0;
 	bool leftIsPressed = false;
 	bool rightIsPressed = false;
 	bool isInWindow = false;

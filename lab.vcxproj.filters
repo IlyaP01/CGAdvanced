@@ -17,6 +17,12 @@
     <Filter Include="src\gfx">
       <UniqueIdentifier>{337f3dbe-4573-45bc-94de-19aea1774300}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\scene">
+      <UniqueIdentifier>{7736eee5-dc33-4be2-8006-a542e3781733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\light">
+      <UniqueIdentifier>{62ac9d45-2abd-49b6-9c75-07f2f2a5cdf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -46,6 +52,21 @@
     <ClCompile Include="src\Graphics.cpp">
       <Filter>src\gfx</Filter>
     </ClCompile>
+    <ClCompile Include="src\Camera.cpp">
+      <Filter>src\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Cube.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Drawable.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LightModel.cpp">
+      <Filter>src\light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App.h">
@@ -74,6 +95,21 @@
     </ClInclude>
     <ClInclude Include="src\WinDef.h">
       <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>src\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Scene.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Drawable.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Cube.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightModel.h">
+      <Filter>src\light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

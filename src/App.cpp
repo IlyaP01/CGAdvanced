@@ -1,9 +1,21 @@
-﻿#include "App.h"
+﻿#include <DirectXMath.h>
+#include "App.h"
+#include "Cube.h"
+
+namespace DX = DirectX;
 
 App::App()
 	:
-	wnd(800, 600, "cg gpu", std::bind(&App::DoFrame, this))
+	wnd(800, 600, "cg gpu", std::bind(&App::DoFrame, this)),
+	camera(
+		DX::XMVectorSet(0.f, 0.f, 4.f, 1.f),
+		DX::XMVectorSet(0.f, 0.f, 1.f, 0.f),
+		DX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 {
+	scene.addDrawable<Cube>(DX::XMVectorSet(0.f, 0.f, 0.f, 0.f), 1.f);
+	lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -3.f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 0.5);
+	lightModel.addPointLight(DX::XMVectorSet(0.f, 0.f, -3.f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 0.5);
+	lightModel.addPointLight(DX::XMVectorSet(-1.f, 0.f, -3.f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 0.5);
 }
 
 int App::Go()
@@ -21,9 +33,11 @@ int App::Go()
 
 void App::DoFrame()
 {
+	float dt = timer.Mark();
+	camera.Rotate(wnd.mouse, dt, wnd.GetWidth(), wnd.GetHeight());
+	camera.Move(wnd.kbd, dt);
 	wnd.Gfx().ClearBuffer( 1.f,1.f,1.f );
-	wnd.Gfx().DrawTest(timer.Peek(), 
-		(float)wnd.mouse.GetPosX() / (float)wnd.GetWidth() * 2.f - 1.0f,
-		-(float)wnd.mouse.GetPosY() / (float)wnd.GetHeight() * 2.f + 1.0f);
+	wnd.Gfx().DrawScene(scene, camera, lightModel);
+	wnd.mouse.Flush();
 	wnd.Gfx().EndFrame();
 } 
