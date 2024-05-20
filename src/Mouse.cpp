@@ -48,10 +48,12 @@ Mouse::Event Mouse::Read() noexcept
 void Mouse::Flush() noexcept
 {
 	buffer = std::queue<Event>();
+	shift = { 0, 0 };
 }
 
 void Mouse::OnMouseMove( int newx,int newy ) noexcept
 {
+	shift = { newx - x, newy - y };
 	x = newx;
 	y = newy;
 
@@ -123,6 +125,11 @@ void Mouse::TrimBuffer() noexcept
 	{
 		buffer.pop();
 	}
+}
+
+std::pair<int, int> Mouse::getShift() const noexcept
+{
+	return std::pair<int, int>(shift.x, shift.y);
 }
 
 void Mouse::OnWheelDelta( int x,int y,int delta ) noexcept
