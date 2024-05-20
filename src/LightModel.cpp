@@ -17,7 +17,7 @@ void LightModel::addPointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR col
 void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	if (m_pPointLightBuffer == nullptr || m_PSSimple == nullptr || m_PSBrightness == nullptr || m_PSCopy == nullptr || m_PSHdr == nullptr)
-		initResurce(pDevice, pContext);
+		initResource(pDevice, pContext);
 	else
 	{
 		D3D11_VIEWPORT vp = { 0 };
@@ -36,7 +36,7 @@ void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mic
 		rtt->clear(1.f, 1.f, 1.f, pDevice, pContext);
 }
 
-void LightModel::initResurce(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
+void LightModel::initResource(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	if (!m_pPointLightBuffer)
 	{

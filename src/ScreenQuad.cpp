@@ -1,7 +1,8 @@
 #include <d3dcompiler.h>
 #include "ScreenQuad.h"
 
-void ScreenQuad::initResurce(
+void ScreenQuad::initResource
+(
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
@@ -57,7 +58,7 @@ void ScreenQuad::render(
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	if (m_pVertexBuffer == nullptr || m_pIndexBuffer == nullptr)
-		initResurce(pDevice, pContext);
+		initResource(pDevice, pContext);
 
 	const UINT stride = sizeof(ProcessTextureVertex);
 	const UINT offset = 0u;
@@ -72,7 +73,7 @@ void ScreenQuad::setVS(
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	if (m_pVertexBuffer == nullptr || m_pIndexBuffer == nullptr)
-		initResurce(pDevice, pContext);
+		initResource(pDevice, pContext);
 	pContext->VSSetShader(m_VSCopy.Get(), nullptr, 0u);
 	pContext->IASetInputLayout(m_pProcessTextureLayout.Get());
 }

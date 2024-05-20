@@ -32,9 +32,9 @@ Cube::Cube(DX::XMVECTOR const& posiiton, float sideSize):
 
 	m_normals = {
 		{0.0	,0.0	,1.0	},
-		{0.0	,0.0	,- 1.0	},
+		{0.0	,0.0	,-1.0	},
 		{0.0	,1.0	,0.0	},
-		{0.0	,- 1.0	,0.0	},
+		{0.0	,-1.0	,0.0	},
 		{1.0	,0.0	,0.0	},
 		{-1.0	,0.0	,0.0	},
 	};
@@ -47,24 +47,26 @@ Cube::Cube(DX::XMVECTOR const& posiiton, float sideSize):
 		3,3,3, 3,3,3,
 		0,0,0, 0,0,0,
 	};
+	DX::XMFLOAT3 v2F;
+	DX::XMStoreFloat3(&v2F, posiiton);
+	m_transform = DX::XMMatrixTranspose(DX::XMMatrixTranslation(v2F.x, v2F.y, v2F.z));
 }
 
 void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {
 	if (m_pVertexBuffer == nullptr)
-		initResurce(pDevice, pContext);
-	
+		initResource(pDevice, pContext);
+
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
-	
+
 	updateModelBuffer(pDevice, pContext);
 
 	pContext->IASetVertexBuffers(0u, 1u, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-	//pContext->IASetIndexBuffer(m_pVIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 	pContext->Draw((UINT)m_vIndices.size(), 0u);
 }
 
-void Cube::initResurce(
+void Cube::initResource(
 	Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {
@@ -84,7 +86,6 @@ void Cube::initResurce(
 	sd.pSysMem = vBuffer.data();
 
 	THROW_IF_FAILED(DrawError, pDevice->CreateBuffer(&bd, &sd, &m_pVertexBuffer));
-	
 /*
 	D3D11_BUFFER_DESC ibd = { 0 };
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -107,13 +108,9 @@ void Cube::updateModelBuffer(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice
 		DirectX::XMMATRIX transform;
 	};
 
-	const ConstantBuffer cb =
+	const ConstantBuffer cb
 	{
-		{
-			DX::XMMatrixTranspose(
-				DX::XMMatrixTranslation(0.f,0.f,4.0f)
-			)
-		}
+		m_transform
 	};
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
