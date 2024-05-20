@@ -165,7 +165,7 @@ void Graphics::DrawScene(Scene& scene, Camera const& camera, LightModel& lightMo
 	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	
-	scene.render(m_pDevice, m_pContext);
+	scene.render(m_pDevice, m_pContext, &lightModel.getShader());
 	lightModel.applyTonemapEffect(m_pDevice, m_pContext, m_pAnnotation, m_sceneRenderTarget, m_postprocessedRenderTarget);
 
 	endEvent();

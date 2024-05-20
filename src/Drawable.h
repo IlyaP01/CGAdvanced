@@ -2,7 +2,7 @@
 #include "WinDef.h"
 #include "BaseException.h"
 #include <d3d11_1.h>
-
+#include "PixelShader.h"
 
 class Drawable
 {
@@ -16,6 +16,8 @@ protected:
 public:
 	virtual void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) = 0;
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext,
+		PBRPixelShader* pixelShader) = 0;
+
 	virtual ~Drawable() = 0 {};
 };

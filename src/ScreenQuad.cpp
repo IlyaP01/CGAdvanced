@@ -55,7 +55,7 @@ void ScreenQuad::initResource
 
 void ScreenQuad::render(
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext, PBRPixelShader* pixelShader)
 {
 	if (m_pVertexBuffer == nullptr || m_pIndexBuffer == nullptr)
 		initResource(pDevice, pContext);

@@ -129,10 +129,22 @@
     <ClInclude Include="src\Sphere.h">
       <Filter>src\scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Defines.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PhysicallyDrawable.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PixelShader.h">
+      <Filter>src\gfx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
     <None Include=".gitignore" />
+    <None Include="src\PBRPixelShader.cginc">
+      <Filter>src\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\BrightnessShader.hlsl">
@@ -151,6 +163,9 @@
       <Filter>src\shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\CopyVertexShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\NDPixelShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
   </ItemGroup>
