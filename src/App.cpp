@@ -1,6 +1,7 @@
 ﻿#include <DirectXMath.h>
 #include "App.h"
 #include "Cube.h"
+#include "Sphere.h"
 
 namespace DX = DirectX;
 
@@ -13,6 +14,9 @@ App::App()
 		DX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 {
 	m_scene.addDrawable<Cube>(DX::XMVectorSet(0.f, 0.f, 0.f, 0.f), 4.f);
+
+	m_scene.addDrawable<Sphere>(DX::XMVectorSet(0.f, 0.f, 0.f, 0.f), 1.f);
+
 	m_lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(0.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(-1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);

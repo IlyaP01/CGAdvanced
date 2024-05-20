@@ -73,6 +73,9 @@
     <ClCompile Include="src\ScreenQuad.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sphere.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\App.h">
@@ -122,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="src\RenderTargetTexture.h">
       <Filter>src\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sphere.h">
+      <Filter>src\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

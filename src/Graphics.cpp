@@ -208,9 +208,25 @@ void Graphics::setCamera(Camera const& camera)
 	csd.pSysMem = &cb;
 	THROW_IF_FAILED(GtxError, m_pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
 
-	// bind constant buffer to vertex shader
 	m_pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+	const ConstantBuffer modelTransformBuffer =
+	{
+		{
+			DX::XMMatrixIdentity()
+		}
+	};
 
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pCBModelTransform;
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbd.MiscFlags = 0u;
+	cbd.ByteWidth = sizeof(modelTransformBuffer);
+	cbd.StructureByteStride = 0u;
+	csd.pSysMem = &modelTransformBuffer;
+	THROW_IF_FAILED(GtxError, m_pDevice->CreateBuffer(&cbd, &csd, &pCBModelTransform));
+
+	m_pContext->VSSetConstantBuffers(1u, 1u, pCBModelTransform.GetAddressOf());
 }
 
 Graphics::~Graphics()

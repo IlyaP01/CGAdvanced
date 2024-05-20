@@ -36,7 +36,7 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 
 private:
-	void initResurce(
+	void initResource(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 
