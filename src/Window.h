@@ -4,6 +4,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "PBRWidget.h"
 #include <optional>
 #include <memory>
 #include <functional>
@@ -51,9 +52,12 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 	Graphics& Gfx();
+	void RenderGui();
+	PBRParams getPBRParams() const;
 private:
 	static LRESULT CALLBACK WndProcWINAPI( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noexcept;
 	LRESULT WndProc( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noexcept;
+	void InitImGui();
 public:
 	Keyboard kbd;
 	Mouse mouse;
@@ -63,9 +67,8 @@ private:
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
 	std::function<void(void)> doFrame;
-
+	PBRWidget pbrWidget;
 };
-
 
 // error exception helper macro
 #define CHWND_EXCEPT( hr ) Window::Exception( __LINE__,__FILE__,hr )

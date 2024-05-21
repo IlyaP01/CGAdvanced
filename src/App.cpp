@@ -55,9 +55,16 @@ void App::DoFrame()
 	float dt = m_timer.Mark();
 	m_camera.Rotate(m_wnd.mouse, dt, m_wnd.GetWidth(), m_wnd.GetHeight());
 	m_camera.Move(m_wnd.kbd, dt);
+
+	for (unsigned i = 0; i < m_scene.phisicallyDrawableSize(); i++)
+	{
+		m_scene.setPBRParams(i, m_wnd.getPBRParams());
+	}
+
 	m_wnd.Gfx().ClearBuffer( 1.f,1.f,1.f );
 	m_wnd.Gfx().DrawScene(m_scene, m_camera, m_lightModel);
 	m_wnd.mouse.Flush();
+	m_wnd.RenderGui();
 	m_wnd.Gfx().EndFrame();
 }
 

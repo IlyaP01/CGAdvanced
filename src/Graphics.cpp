@@ -2,6 +2,8 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 
+#include "ImGui/imgui_impl_dx11.h"
+
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib")
 
@@ -82,6 +84,8 @@ Graphics::Graphics(HWND hWnd) :
 	
 	m_postprocessedRenderTarget = std::make_shared<RenderTargetTexture>(RenderTargetTexture(bufferSize.height, bufferSize.widht));
 	m_postprocessedRenderTarget->initResource(m_pDevice, m_pContext, pBackBuffer);
+
+	ImGui_ImplDX11_Init(m_pDevice.Get(), m_pContext.Get());
 }
 
 void Graphics::DrawTest(Camera const& viewCamera, float angle, float x, float y)

@@ -56,3 +56,8 @@ void Scene::setPBRParams(UINT idx, PBRParams params)
 	assert(idx < m_objects.size());
 	m_objects[idx]->setPBRParams(params);
 }
+
+unsigned Scene::phisicallyDrawableSize() const
+{
+	return m_objects.size();
+}
