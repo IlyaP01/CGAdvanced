@@ -2,7 +2,7 @@
 #include <cmath>
 #include "LightModel.h"
 #include "BaseException.h"
-
+#include "Defines.h"
 
 LightModel::LightModel() : m_maxTextureHeight(0), m_maxTextureWidth(0)
 {
@@ -30,41 +30,28 @@ void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mic
 		}
 	}
 
-	pContext->PSSetShader(m_PSSimple.Get(), nullptr, 0u);
-	pContext->PSSetConstantBuffers(0, 1, m_pPointLightBuffer.GetAddressOf()); 
+	m_PSNormalDistribution->Set();
+
 	for (auto& rtt : m_scaledHDRTargets)
 		rtt->clear(1.f, 1.f, 1.f, pDevice, pContext);
 }
 
 void LightModel::initResource(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
-	if (!m_pPointLightBuffer)
-	{
-		D3D11_BUFFER_DESC lightBufferDesc = { 0 };
-		lightBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		lightBufferDesc.ByteWidth = sizeof(PointLightBuffer);
-		lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		lightBufferDesc.CPUAccessFlags = 0;
-		lightBufferDesc.MiscFlags = 0;
-		lightBufferDesc.StructureByteStride = 0;
-
-		PointLightBuffer lightBuffer = {};
-		lightBuffer.numPLights.x = (UINT)m_pointLights.size();
-		memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
-
-		D3D11_SUBRESOURCE_DATA lightBufferData = {};
-		lightBufferData.pSysMem = &lightBuffer;
-		lightBufferData.SysMemPitch = 0;
-		lightBufferData.SysMemSlicePitch = 0;
-
-		THROW_IF_FAILED(BaseException, pDevice->CreateBuffer(&lightBufferDesc, &lightBufferData, &m_pPointLightBuffer));
-	}
-
-	// create pixel shaders
 	if (!m_PSSimple) m_PSSimple = createPixelShader(m_psSimplePath, pDevice);
 	if (!m_PSBrightness) m_PSBrightness = createPixelShader(m_psBrightnessPath, pDevice);
 	if (!m_PSCopy) m_PSCopy = createPixelShader(m_psCopyPath, pDevice);
 	if (!m_PSHdr) m_PSHdr = createPixelShader(m_psHdrPath, pDevice);
+	if (!m_PSNormalDistribution)
+	{
+		m_PSNormalDistribution.emplace(m_psNormalDistributionPath, pDevice, pContext); // exceprion
+		PointLightBuffer lightBuffer = {};
+		lightBuffer.numPLights.x = (UINT)m_pointLights.size();
+		memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
+
+		m_PSNormalDistribution->CreateConstantBuffer(0, &lightBuffer);
+
+	}
 
 	if (!m_pAverageLumenCPUTexture)
 	{
@@ -141,7 +128,7 @@ void LightModel::applyTonemapEffect(
 	
 	pContext->PSSetShader(m_PSBrightness.Get(), nullptr, 0u);
 	if (m_scaledHDRTargets.size() == 0)
-		m_scaledHDRTargets.resize(1);// ??? invalid subcription
+		m_scaledHDRTargets.resize(1);
 	processTexture(inputRTT, m_scaledHDRTargets[0], pDevice, pContext);
 
 	pContext->PSSetShader(m_PSCopy.Get(), nullptr, 0u);
@@ -213,7 +200,7 @@ void LightModel::processTexture(
 	pContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());
 
 	m_pScreenQuad->setVS(pDevice, pContext);
-	m_pScreenQuad->render(pDevice, pContext);
+	m_pScreenQuad->render(pDevice, pContext, nullptr);
 	//pContext->PSSetShaderResources(0u, 1u, pSRV);
 }
 

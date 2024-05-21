@@ -13,11 +13,8 @@ App::App()
 		DX::XMVectorSet(0.f, 0.f, 1.f, 0.f),
 		DX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 {
-	m_scene.addDrawable<Cube>(DX::XMVectorSet(0.f, 0.f, 0.f, 0.f), 4.f);
-
-	m_scene.addDrawable<Sphere>(DX::XMVectorSet(0.f, 0.f, 0.f, 0.f), 1.f);
-
-	m_lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
+	AddSpheresGrid();
+	m_lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -10.f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(0.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(-1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 }
@@ -31,6 +28,23 @@ int App::Go()
 		{
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;
+		}
+	}
+}
+
+void App::AddSpheresGrid()
+{
+	DX::XMFLOAT3 albedo = { 1, 0.71, 0.29 };
+	float radius = 3.f;
+	float step = 1.f;
+	int grid_size = 9;
+	float centerShift = (grid_size / 2) * (2 * radius + step);
+	for (size_t i = 1; i <= 10; ++i)
+	{
+		for (size_t j = 1; j <= 10; ++j)
+		{
+			m_scene.addDrawable<Sphere>(DX::XMVectorSet(i * (2 * radius + step) + radius - centerShift, j * (2 * radius + step) + radius - centerShift, 70.f, 0.f), radius);
+			m_scene.setPBRParams((i - 1) * 10 + (j - 1), { albedo, i / 10.f, j / 10.f });
 		}
 	}
 }
@@ -57,7 +71,7 @@ void App::updateLight()
 		if (m_wnd.kbd.KeyIsPressed(codes[i]))
 		{
 			m_lightModel.clearLights();
-			m_lightModel.addPointLight(DX::XMVectorSet(0.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), (float)(1 << i));
+			m_lightModel.addPointLight(DX::XMVectorSet(0.f, 30.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), (float)(1 << i));
 			m_lightModel.addPointLight(DX::XMVectorSet(-1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), (float)(1 << i));
 			m_lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), (float)(1 << i));
 		}

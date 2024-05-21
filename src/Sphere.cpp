@@ -1,5 +1,6 @@
-#include "Sphere.h"
 #include <algorithm>
+#include "Sphere.h"
+#include "Defines.h"
 
 Sphere::Sphere(DX::XMVECTOR const& position, float radius)
 	: m_pVertexBuffer(nullptr)
@@ -24,13 +25,15 @@ Sphere::Sphere(DX::XMVECTOR const& position, float radius)
 		for (size_t h = 0; h < s_hSamplingSize - 1; h++)
 		{
 			const auto idx = (v * (s_hSamplingSize - 1) + h) * 6;
-			m_vIndices[idx] = v * s_hSamplingSize + h;
-			m_vIndices[idx + 1] = (v + 1) * s_hSamplingSize + (h + 1);
-			m_vIndices[idx + 2] = (v + 1) * s_hSamplingSize + h;
 
+			m_vIndices[idx] = v * s_hSamplingSize + h;
+			m_vIndices[idx + 1] = (v + 1) * s_hSamplingSize + h;
+			m_vIndices[idx + 2] = (v + 1) * s_hSamplingSize + (h + 1);
+			
 			m_vIndices[idx + 3] = v * s_hSamplingSize + h;
-			m_vIndices[idx + 4] = v * s_hSamplingSize + (h + 1);
-			m_vIndices[idx + 5] = (v + 1) * s_hSamplingSize + (h + 1);
+			m_vIndices[idx + 4] = (v + 1) * s_hSamplingSize + (h + 1);
+			m_vIndices[idx + 5] = v * s_hSamplingSize + (h + 1);
+			
 		}
 	}
 	DX::XMFLOAT3 v2F;
@@ -40,7 +43,8 @@ Sphere::Sphere(DX::XMVECTOR const& position, float radius)
 
 void Sphere::render(
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
+
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext, PBRPixelShader* pixelShader)
 {
 	if (m_pVertexBuffer == nullptr)
 		initResource(pDevice, pContext);
@@ -51,6 +55,11 @@ void Sphere::render(
 	updateModelBuffer(pDevice, pContext);
 
 	pContext->IASetVertexBuffers(0u, 1u, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+#if USE_PBR_SHADER
+	pixelShader->CreateConstantBuffer(1, &m_pbrParams);
+#endif
+	pixelShader->SetConstantBuffers();
 	pContext->Draw((UINT)m_vIndices.size(), 0u);
 }
 
@@ -85,7 +94,7 @@ void Sphere::updateModelBuffer(
 		DirectX::XMMATRIX transform;
 	};
 
-	static const ConstantBuffer cb =
+	const ConstantBuffer cb =
 	{
 		m_transform
 	};
@@ -104,4 +113,14 @@ void Sphere::updateModelBuffer(
 
 	// bind constant buffer to vertex shader
 	pContext->VSSetConstantBuffers(1u, 1u, pConstantBuffer.GetAddressOf());
+}
+
+const PBRParams Sphere::getPBRParams()
+{
+	return m_pbrParams;
+}
+
+void Sphere::setPBRParams(PBRParams params)
+{
+	m_pbrParams = params;
 }

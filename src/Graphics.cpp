@@ -30,10 +30,10 @@ Graphics::Graphics(HWND hWnd) :
 	scd.SampleDesc.Count = 1;
 	scd.SampleDesc.Quality = 0;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.BufferCount = 1;
+	scd.BufferCount = 2;
 	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
-	scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	scd.Flags = 0;
 
 	UINT creationFlags = 0;
@@ -164,8 +164,23 @@ void Graphics::DrawScene(Scene& scene, Camera const& camera, LightModel& lightMo
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
+	__declspec(align(16))
+		struct CameraPos
+	{
+		DX::XMFLOAT3 xcameraPos;
+	};
+	CameraPos cb = { camera.getPos() };
+	lightModel.getShader().CreateConstantBuffer(2, &cb);
+
+	__declspec(align(16))
+		struct PBR
+	{
+		int viewMode = 0;
+	};
+	PBR cb2 = { 0 };
+	lightModel.getShader().CreateConstantBuffer(3, &cb2);
 	
-	scene.render(m_pDevice, m_pContext);
+	scene.render(m_pDevice, m_pContext, &lightModel.getShader());
 	lightModel.applyTonemapEffect(m_pDevice, m_pContext, m_pAnnotation, m_sceneRenderTarget, m_postprocessedRenderTarget);
 
 	endEvent();
@@ -208,25 +223,9 @@ void Graphics::setCamera(Camera const& camera)
 	csd.pSysMem = &cb;
 	THROW_IF_FAILED(GtxError, m_pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer));
 
+	// bind constant buffer to vertex shader
 	m_pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
-	const ConstantBuffer modelTransformBuffer =
-	{
-		{
-			DX::XMMatrixIdentity()
-		}
-	};
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pCBModelTransform;
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(modelTransformBuffer);
-	cbd.StructureByteStride = 0u;
-	csd.pSysMem = &modelTransformBuffer;
-	THROW_IF_FAILED(GtxError, m_pDevice->CreateBuffer(&cbd, &csd, &pCBModelTransform));
-
-	m_pContext->VSSetConstantBuffers(1u, 1u, pCBModelTransform.GetAddressOf());
 }
 
 Graphics::~Graphics()

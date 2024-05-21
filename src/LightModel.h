@@ -2,11 +2,13 @@
 #include <d3d11_1.h>
 #include <vector>
 #include <memory>
+#include <optional>
 #include <DirectXMath.h>
 #include "WinDef.h"
 #include "ScreenQuad.h"
 #include "RenderTargetTexture.h"
 #include "Timer.h"
+#include "PixelShader.h"
 
 class LightModel
 {
@@ -28,6 +30,11 @@ public:
 		std::shared_ptr<RenderTargetTexture> resultRTT);
 
 	void clearLights();
+
+	PBRPixelShader& getShader()
+	{
+		return m_PSNormalDistribution.value();
+	}
 
 private:
 	
@@ -55,11 +62,15 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSCopy;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSBrightness;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSHdr;
+
+	std::optional<PBRPixelShader> m_PSNormalDistribution;
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pPointLightBuffer;
 	static constexpr wchar_t const * const m_psSimplePath  = L"PixelShader.cso";
 	static constexpr wchar_t const* const m_psCopyPath = L"CopyPixelShader.cso";
 	static constexpr wchar_t const* const m_psBrightnessPath = L"BrightnessShader.cso";
 	static constexpr wchar_t const* const m_psHdrPath = L"HDRShader.cso";
+	static constexpr wchar_t const* const m_psNormalDistributionPath = L"PBRPixelShader.cso";
 	//static constexpr wchar_t const* const m_vsCopyPath = L"CopyVertexShader.cso";
 
 	// tonemap vars

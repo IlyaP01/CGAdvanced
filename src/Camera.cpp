@@ -52,3 +52,10 @@ DX::XMMATRIX Camera::getView() const
 {
 	return DX::XMMatrixLookAtLH(m_pos, m_target, m_up);
 }
+
+DX::XMFLOAT3 Camera::getPos() const
+{
+	DX::XMFLOAT3 v2F;
+	DX::XMStoreFloat3(&v2F, m_pos);
+	return v2F;
+}

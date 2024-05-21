@@ -50,11 +50,14 @@
     <ClInclude Include="src\BaseException.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Cube.h" />
+    <ClInclude Include="src\Defines.h" />
     <ClInclude Include="src\Drawable.h" />
     <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\LightModel.h" />
     <ClInclude Include="src\Mouse.h" />
+    <ClInclude Include="src\PhysicallyDrawable.h" />
+    <ClInclude Include="src\PixelShader.h" />
     <ClInclude Include="src\RenderTargetTexture.h" />
     <ClInclude Include="src\ScreenQuad.h" />
     <ClInclude Include="src\Scene.h" />
@@ -67,6 +70,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="src\PBRPixelShader.cginc" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\BrightnessShader.hlsl">
@@ -88,6 +92,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Remply3d|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="src\PBRPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Remply3d|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Remply3d|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="src\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

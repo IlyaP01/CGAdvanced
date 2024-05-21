@@ -20,12 +20,12 @@ void Scene::update(
 	}
 }
 
-void Scene::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
+void Scene::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext, PBRPixelShader* pixelShader)
 {
 	if (m_pVertexShader == nullptr || m_pInputLayout == nullptr)
 		initResurses(pDevice, pContext);
 	for (auto& obj : m_objects)
-		obj->render(pDevice, pContext);
+		obj->render(pDevice, pContext, pixelShader);
 }
 
 void Scene::initResurses(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
@@ -49,4 +49,10 @@ void Scene::initResurses(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mi
 	));
 
 	update(pDevice, pContext);
+}
+
+void Scene::setPBRParams(UINT idx, PBRParams params)
+{
+	assert(idx < m_objects.size());
+	m_objects[idx]->setPBRParams(params);
 }
