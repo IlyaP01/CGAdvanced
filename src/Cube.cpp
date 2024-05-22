@@ -7,6 +7,7 @@ namespace DX = DirectX;
 Cube::Cube(DX::XMVECTOR const& position, float sideSize, ShaderLoader::ShaderType type)
 	: m_pVertexBuffer(nullptr)
 	, m_type(type)
+
 {
 	float hufSize = sideSize / 2;
 	m_vertices =
@@ -53,7 +54,8 @@ Cube::Cube(DX::XMVECTOR const& position, float sideSize, ShaderLoader::ShaderTyp
 	m_transform = DX::XMMatrixTranspose(DX::XMMatrixTranslation(v2F.x, v2F.y, v2F.z));
 }
 
-void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
+void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {
 	if (m_pVertexBuffer == nullptr)
 		initResource(pDevice, pContext);
@@ -67,11 +69,9 @@ void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft:
 	updateModelBuffer(pDevice, pContext);
 
 	pContext->IASetVertexBuffers(0u, 1u, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-
 	if (m_type == ShaderLoader::PBRShader)
 		shader.CreateConstantBuffer(1, &m_pbrParams);
 	shader.SetConstantBuffers();
-
 	pContext->Draw((UINT)m_vIndices.size(), 0u);
 }
 
@@ -95,7 +95,6 @@ void Cube::initResource(
 	sd.pSysMem = vBuffer.data();
 
 	THROW_IF_FAILED(DrawError, pDevice->CreateBuffer(&bd, &sd, &m_pVertexBuffer));
-
 }
 
 void Cube::updateModelBuffer(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)

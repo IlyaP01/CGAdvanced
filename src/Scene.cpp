@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include <d3dcompiler.h>
-#include "SkyBox.h"
+#include "EnvSphere.h"
+#include "Camera.h"
+
 
 void Scene::clear()
 {
@@ -20,36 +22,49 @@ void Scene::update(
 	}
 }
 
-void Scene::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
+void Scene::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {
 	if (m_pVertexShader == nullptr || m_pInputLayout == nullptr || m_pEnvSphereInputLayout == nullptr || m_pEnvSphereVertexShader == nullptr)
 		initResourses(pDevice, pContext);
+
 	if (m_environmentSphere)
 	{
+		startEvent(L"SceneEnv");
 		pContext->VSSetShader(m_pEnvSphereVertexShader.Get(), nullptr, 0u);
 		pContext->IASetInputLayout(m_pEnvSphereInputLayout.Get());
 		m_environmentSphere->render(pDevice, pContext);
 		pContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
 		pContext->IASetInputLayout(m_pInputLayout.Get());
+		endEvent();
 	}
 
-	for (auto& obj : m_objects){
+	startEvent(L"SceneObjs");
+	for (auto& obj : m_objects)
+	{
 		obj->render(pDevice, pContext);
 	}
-	for (auto& obj : m_physicallObjects){
+	endEvent();
+	startEvent(L"ScenePhObjs");
+	for (auto& obj : m_physicallObjects)
+	{
 		obj->render(pDevice, pContext);
 	}
+	endEvent();
 }
 
-void Scene::setEnvSphere(float radius, wchar_t const* texturePath)
+void Scene::setEnvSphere(float radius, wchar_t const* texturePath, DirectX::XMVECTOR pos, Camera const& camera)
 {
-	m_environmentSphere = std::make_shared<EnvSphere>(DirectX::XMVectorSet(0.f, 0.f, 0.f, 0.f), radius, texturePath);
+	m_environmentSphere = std::make_shared<EnvSphere>(pos, radius, texturePath, camera);
 }
 
 void Scene::initResourses(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
+	THROW_IF_FAILED(DrawError,
+		pContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation),
+			reinterpret_cast<void**>(m_pAnnotation.GetAddressOf()))
+	);
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-
 	// input (vertex) layout (2d position only)
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
@@ -92,4 +107,19 @@ void Scene::setPBRParams(UINT idx, PBRParams params)
 unsigned Scene::phisicallyDrawableSize() const
 {
 	return static_cast<unsigned>(m_physicallObjects.size());
+}
+
+void Scene::startEvent(LPCWSTR eventName)
+{
+#ifdef _DEBUG
+	m_pAnnotation->BeginEvent(eventName);
+#endif
+}
+
+
+void Scene::endEvent()
+{
+#ifdef _DEBUG
+	m_pAnnotation->EndEvent();
+#endif
 }

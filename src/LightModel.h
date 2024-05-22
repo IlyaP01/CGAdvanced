@@ -1,8 +1,8 @@
 #pragma once
 #include <d3d11_1.h>
+#include <optional>
 #include <vector>
 #include <memory>
-#include <optional>
 #include <DirectXMath.h>
 #include "WinDef.h"
 #include "ScreenQuad.h"
@@ -30,8 +30,10 @@ public:
 		std::shared_ptr<RenderTargetTexture> resultRTT);
 
 	void clearLights();
+
+
 private:
-	
+
 	void initResource(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
@@ -55,9 +57,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSSimple;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSBrightness;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSHdr;
-
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pPointLightBuffer;
-	static constexpr wchar_t const * const m_psSimplePath  = L"PixelShader.cso";
+	static constexpr wchar_t const* const m_psSimplePath = L"PixelShader.cso";
 	static constexpr wchar_t const* const m_psCopyPath = L"CopyPixelShader.cso";
 	static constexpr wchar_t const* const m_psBrightnessPath = L"BrightnessShader.cso";
 	static constexpr wchar_t const* const m_psHdrPath = L"HDRShader.cso";
@@ -72,7 +73,7 @@ private:
 	float m_prevExposure = 0;
 	Timer m_timer;
 	const float m_eyeAdaptationS = .5f;
-	
+
 	struct PointLight
 	{
 		DirectX::XMVECTOR pos;

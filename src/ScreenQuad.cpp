@@ -1,8 +1,7 @@
 #include <d3dcompiler.h>
 #include "ScreenQuad.h"
 
-void ScreenQuad::initResource
-(
+void ScreenQuad::initResource(
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {

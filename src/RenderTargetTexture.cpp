@@ -1,12 +1,13 @@
 #include "RenderTargetTexture.h"
 
-RenderTargetTexture::RenderTargetTexture(int height, int width) : m_height(height), m_width(width) {
+RenderTargetTexture::RenderTargetTexture(int height, int width) : m_height(height), m_width(width), m_dsView(nullptr) {
 	m_viewport = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_width), static_cast<float>(m_height));
 }
 
 void RenderTargetTexture::initResource(
 	Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext,
+	ID3D11DepthStencilView* dsView,
 	Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer)
 {
 	D3D11_TEXTURE2D_DESC td;
@@ -33,13 +34,15 @@ void RenderTargetTexture::initResource(
 		THROW_IF_FAILED(BaseException, pDevice->CreateShaderResourceView(m_pTexture2D.Get(), nullptr, &m_pShaderResourceView));
 		THROW_IF_FAILED(BaseException, pDevice->CreateRenderTargetView(m_pTexture2D.Get(), nullptr, &m_pRenderTargetView));
 	}
+	m_dsView = dsView;
 }
 
 void RenderTargetTexture::set(
 	Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
+
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext) const
 {
-	pContext->OMSetRenderTargets(1u, m_pRenderTargetView.GetAddressOf(), nullptr);
+	pContext->OMSetRenderTargets(1u, m_pRenderTargetView.GetAddressOf(), m_dsView);
 	pContext->RSSetViewports(1u, &m_viewport);
 }
 
@@ -50,7 +53,7 @@ void RenderTargetTexture::setAsResource(Microsoft::WRL::ComPtr<ID3D11Device>cons
 }
 
 void RenderTargetTexture::clear(
-	float red, float green, float blue, 
+	float red, float green, float blue,
 	Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice,
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {

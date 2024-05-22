@@ -6,8 +6,9 @@ PBRWidget::PBRWidget()
 	: m_mode(PBRMode::Full)
 {}
 
-PBRWidget::PBRWidget(PBRParams & params)
+PBRWidget::PBRWidget(PBRParams& params)
 	: m_params(params)
+	, m_mode(PBRMode::Full)
 {}
 
 void PBRWidget::AddToRender()
@@ -18,6 +19,7 @@ void PBRWidget::AddToRender()
 		ImGui::RadioButton("Normal distribution", reinterpret_cast<int*>(&m_mode), static_cast<int>(PBRMode::NormalDistribution));
 		ImGui::RadioButton("Geometry", reinterpret_cast<int*>(&m_mode), static_cast<int>(PBRMode::Geometry));
 		ImGui::RadioButton("Fresnel", reinterpret_cast<int*>(&m_mode), static_cast<int>(PBRMode::Fresnel));
+
 		ImGui::SliderFloat("Roughness", &m_params.roughness, 0, 1);
 		ImGui::SliderFloat("Metalness ", &m_params.metalness, 0, 1);
 		ImGui::Text("Albedo");
@@ -37,7 +39,6 @@ PBRParams PBRWidget::GetParams() const
 {
 	return m_params;
 }
-
 PBRMode PBRWidget::GetMode() const
 {
 	return m_mode;

@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <DirectXMath.h>
 
 __declspec(align(16))
@@ -15,6 +14,7 @@ struct PBRParams
 		, albedo(albedo_)
 	{};
 };
+
 enum class PBRMode : int
 {
 	Full = 0,

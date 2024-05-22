@@ -112,7 +112,7 @@
     <ClCompile Include="src\DDSTextureLoader\WICTextureLoader.cpp">
       <Filter>src\DDSTextureLoader</Filter>
     </ClCompile>
-    <ClCompile Include="src\SkyBox.cpp">
+    <ClCompile Include="src\EnvSphere.cpp">
       <Filter>src\scene</Filter>
     </ClCompile>
     <ClCompile Include="src\ShaderLoader.cpp">
@@ -222,7 +222,7 @@
     <ClInclude Include="src\DDSTextureLoader\WICTextureLoader.h">
       <Filter>src\DDSTextureLoader</Filter>
     </ClInclude>
-    <ClInclude Include="src\SkyBox.h">
+    <ClInclude Include="src\EnvSphere.h">
       <Filter>src\scene</Filter>
     </ClInclude>
     <ClInclude Include="src\ShaderLoader.h">
@@ -261,7 +261,7 @@
     <FxCompile Include="src\PBRPixelShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="src\SBVertexShader.hlsl">
+    <FxCompile Include="src\EnvSphereVertexShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
   </ItemGroup>

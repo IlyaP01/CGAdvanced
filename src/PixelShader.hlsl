@@ -2,23 +2,23 @@ static const uint maxPLights = 3;
 
 struct VSOut
 {
-  float4 pos : SV_Position;
   float3 color : Color;
+  float4 pos : SV_Position;
   float4 norm : Normal;
   float4 wPos : Position1;
 };
 
 struct PointLight
 {
-	float4 pos;
-	float4 col;
-	float4 bsf;
+  float4 pos;
+  float4 col;
+  float4 bsf;
 };
 
 cbuffer PointLightsBuffer : register(b0)
 {
-	uint4 plbLenght;
-	PointLight lights[maxPLights];
+  uint4 plbLenght;
+  PointLight lights[maxPLights];
 };
 
 float4 main(VSOut vs_out) : SV_Target

@@ -13,9 +13,7 @@ public:
 	void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) override;
-
 	const PBRParams getPBRParams() override;
-
 	void setPBRParams(PBRParams params) override;
 
 private:

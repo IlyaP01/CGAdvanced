@@ -1,5 +1,4 @@
-#include "SkyBox.h"
-#include "Defines.h"
+#include "EnvSphere.h"
 #include "ShaderLoader.h"
 
 #include "DDSTextureLoader/WICTextureLoader.h"
@@ -7,9 +6,10 @@
 
 namespace DX = DirectX;
 
-EnvSphere::EnvSphere(DX::XMVECTOR const& position, float radius, wchar_t const* texturePath)
+EnvSphere::EnvSphere(DX::XMVECTOR const& position, float radius, wchar_t const* texturePath, Camera const& camera)
 	: m_pVertexBuffer(nullptr)
 	, m_pTexturePath(texturePath)
+	, m_pCamera(&camera)
 {
 	for (size_t v = 0; v < s_vSamplingSize; v++)
 	{
@@ -50,6 +50,9 @@ void EnvSphere::render(
 	if (m_pVertexBuffer == nullptr || m_pSamplerState == nullptr)
 		initResource(pDevice, pContext);
 
+	// update translation matrix
+	auto cameraPos = m_pCamera->getPos();
+	m_transform = DX::XMMatrixTranspose(DX::XMMatrixTranslation(cameraPos.x, cameraPos.y, cameraPos.z));
 
 	pContext->PSSetShaderResources(0u, 1u, m_ShaderResourceView.GetAddressOf());
 	pContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());

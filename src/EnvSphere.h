@@ -1,7 +1,7 @@
 #pragma once
-
 #include <array>
 #include "Drawable.h"
+#include "Camera.h"
 
 class EnvSphere :
 	public Drawable
@@ -9,9 +9,10 @@ class EnvSphere :
 private:
 	static constexpr size_t s_vSamplingSize = 30;
 	static constexpr size_t s_hSamplingSize = 30;
+	Camera const* m_pCamera;
 
 public:
-	EnvSphere(DirectX::XMVECTOR const& position, float radius, wchar_t const* texturePath);
+	EnvSphere(DirectX::XMVECTOR const& position, float radius, wchar_t const* texturePath, Camera const& camera);
 	void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) override;

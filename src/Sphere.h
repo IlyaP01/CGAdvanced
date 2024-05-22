@@ -5,30 +5,25 @@
 #include "PhysicallyDrawable.h"
 #include "ShaderLoader.h"
 
-namespace DX = DirectX;
-
 class Sphere :
 	public PhysicallyDrawable
 {
 private:
-	static constexpr size_t s_vSamplingSize = 100;
-	static constexpr size_t s_hSamplingSize = 100;
+	static constexpr size_t s_vSamplingSize = 30;
+	static constexpr size_t s_hSamplingSize = 30;
 
 public:
-	Sphere(DX::XMVECTOR const& position, float radius, ShaderLoader::ShaderType type);
+	Sphere(DirectX::XMVECTOR const& position, float radius, ShaderLoader::ShaderType type);
 	void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) override;
-
 	const PBRParams getPBRParams() override;
-
 	void setPBRParams(PBRParams params) override;
-
 private:
 	struct Vertex
 	{
-		DX::XMFLOAT3 pos;
-		DX::XMFLOAT3 norm;
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT3 norm;
 	};
 
 	void initResource(

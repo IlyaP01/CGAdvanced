@@ -5,6 +5,7 @@
 #include "Defines.h"
 #include "ShaderLoader.h"
 
+
 LightModel::LightModel() : m_maxTextureHeight(0), m_maxTextureWidth(0)
 {
 	m_pScreenQuad = std::make_unique<ScreenQuad>(ScreenQuad());
@@ -37,9 +38,12 @@ void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mic
 
 void LightModel::initResource(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
+
+	// create pixel shaders
 	if (!m_PSSimple) m_PSSimple = createPixelShader(m_psSimplePath, pDevice);
 	if (!m_PSBrightness) m_PSBrightness = createPixelShader(m_psBrightnessPath, pDevice);
 	if (!m_PSHdr) m_PSHdr = createPixelShader(m_psHdrPath, pDevice);
+
 	auto& pbrShader = ShaderLoader::get().getPBRShader(pDevice, pContext);
 	PointLightBuffer lightBuffer = {};
 	lightBuffer.numPLights.x = (UINT)m_pointLights.size();
@@ -95,7 +99,7 @@ void LightModel::initResource(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevic
 void LightModel::createDownsamplingRTT(
 	int width, int height,
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) 
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
 	m_maxTextureHeight = height;
 	m_maxTextureWidth = width;
@@ -119,12 +123,11 @@ void LightModel::applyTonemapEffect(
 	std::shared_ptr<RenderTargetTexture> resultRTT)
 {
 	pAnnotation->BeginEvent(L"CalculateAverageBrightness");
-	
+
 	pContext->PSSetShader(m_PSBrightness.Get(), nullptr, 0u);
 	if (m_scaledHDRTargets.size() == 0)
 		m_scaledHDRTargets.resize(1);
 	processTexture(inputRTT, m_scaledHDRTargets[0], pDevice, pContext);
-
 	ShaderLoader::get().getCopyTextureShader(pDevice, pContext).Set();
 	for (size_t i = 1; i < m_scaledHDRTargets.size(); i++)
 		processTexture(m_scaledHDRTargets[i - 1], m_scaledHDRTargets[i], pDevice, pContext);
@@ -135,11 +138,11 @@ void LightModel::applyTonemapEffect(
 	D3D11_MAPPED_SUBRESOURCE averageTextureData;
 	ZeroMemory(&averageTextureData, sizeof(averageTextureData));
 	m_scaledHDRTargets.back()->copyToTexture(m_pAverageLumenCPUTexture.Get(), pDevice, pContext);
-	
+
 	THROW_IF_FAILED(BaseException, pContext->Map(m_pAverageLumenCPUTexture.Get(), 0, D3D11_MAP_READ, 0, &averageTextureData));
 	float averageLogBrightness = std::exp(*(float*)averageTextureData.pData) - 1.0f;
 	pContext->Unmap(m_pAverageLumenCPUTexture.Get(), 0u);
-	
+
 
 	float expGain = (1 - std::exp(-m_timer.Mark() / m_eyeAdaptationS));
 	m_prevExposure += (averageLogBrightness - m_prevExposure) * expGain;
@@ -167,7 +170,7 @@ void LightModel::applyTonemapEffect(
 
 	pContext->PSSetConstantBuffers(0u, 1u, PSConstantBuffer.GetAddressOf());
 	processTexture(inputRTT, resultRTT, pDevice, pContext);
-	
+
 	pAnnotation->EndEvent(); // RenderTonemapView
 }
 
@@ -200,7 +203,7 @@ void LightModel::processTexture(
 
 // TODO: move to shader class 
 Microsoft::WRL::ComPtr<ID3D11PixelShader> LightModel::createPixelShader(
-	const wchar_t* psPath, 
+	const wchar_t* psPath,
 	Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice)
 {
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;

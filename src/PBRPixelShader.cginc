@@ -1,15 +1,15 @@
 static const uint maxPLights = 3;
 static const float PI = 3.14159265359f;
-
 static const int pbrMode = 0;
 static const int normalMode = 1;
 static const int geometryMode = 2;
 static const int fresnelMode = 3;
 
+
 struct PSInput
 {
-	float4 pos : SV_Position;
 	float3 color : Color;
+	float4 pos : SV_Position;
 	float4 norm : Normal;
 	float3 wPos : WORLD_POSITION;
 };
@@ -56,7 +56,7 @@ float3 toCamera(float3 worldPos)
 
 float3 toLight(int idx, float3 worldPos)
 {
-	float3 lPos = lights[idx].pos;
+	float3 lPos = lights[idx].pos.xyz;
 	return normalize(lPos - worldPos);
 }
 float positiveDot(float3 a, float3 b)
