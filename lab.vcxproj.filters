@@ -26,6 +26,9 @@
     <Filter Include="src\ImGui">
       <UniqueIdentifier>{63826beb-952c-4190-844c-5be5029eeeeb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\DDSTextureLoader">
+      <UniqueIdentifier>{ef9975fb-08f3-4bc5-9cb7-3b3bc871c945}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -102,6 +105,24 @@
     </ClCompile>
     <ClCompile Include="src\ImGui\imgui_widgets.cpp">
       <Filter>src\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DDSTextureLoader\DDSTextureLoader11.cpp">
+      <Filter>src\DDSTextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DDSTextureLoader\WICTextureLoader.cpp">
+      <Filter>src\DDSTextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SkyBox.cpp">
+      <Filter>src\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderLoader.cpp">
+      <Filter>src\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PBRPixelShader.cpp">
+      <Filter>src\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PixelShader.cpp">
+      <Filter>src\gfx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +216,21 @@
     <ClInclude Include="src\ImGui\imstb_truetype.h">
       <Filter>src\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\DDSTextureLoader\DDSTextureLoader11.h">
+      <Filter>src\DDSTextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DDSTextureLoader\WICTextureLoader.h">
+      <Filter>src\DDSTextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SkyBox.h">
+      <Filter>src\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShaderLoader.h">
+      <Filter>src\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PBRPixelShader.h">
+      <Filter>src\gfx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -223,6 +259,9 @@
       <Filter>src\shaders</Filter>
     </FxCompile>
     <FxCompile Include="src\PBRPixelShader.hlsl">
+      <Filter>src\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="src\SBVertexShader.hlsl">
       <Filter>src\shaders</Filter>
     </FxCompile>
   </ItemGroup>

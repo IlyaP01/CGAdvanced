@@ -3,6 +3,7 @@
 #include "LightModel.h"
 #include "BaseException.h"
 #include "Defines.h"
+#include "ShaderLoader.h"
 
 LightModel::LightModel() : m_maxTextureHeight(0), m_maxTextureWidth(0)
 {
@@ -16,7 +17,7 @@ void LightModel::addPointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR col
 
 void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
 {
-	if (m_pPointLightBuffer == nullptr || m_PSSimple == nullptr || m_PSBrightness == nullptr || m_PSCopy == nullptr || m_PSHdr == nullptr)
+	if (m_pPointLightBuffer == nullptr || m_PSSimple == nullptr || m_PSBrightness == nullptr || m_PSHdr == nullptr)
 		initResource(pDevice, pContext);
 	else
 	{
@@ -30,8 +31,6 @@ void LightModel::update(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Mic
 		}
 	}
 
-	m_PSNormalDistribution->Set();
-
 	for (auto& rtt : m_scaledHDRTargets)
 		rtt->clear(1.f, 1.f, 1.f, pDevice, pContext);
 }
@@ -40,18 +39,13 @@ void LightModel::initResource(Microsoft::WRL::ComPtr<ID3D11Device> const& pDevic
 {
 	if (!m_PSSimple) m_PSSimple = createPixelShader(m_psSimplePath, pDevice);
 	if (!m_PSBrightness) m_PSBrightness = createPixelShader(m_psBrightnessPath, pDevice);
-	if (!m_PSCopy) m_PSCopy = createPixelShader(m_psCopyPath, pDevice);
 	if (!m_PSHdr) m_PSHdr = createPixelShader(m_psHdrPath, pDevice);
-	if (!m_PSNormalDistribution)
-	{
-		m_PSNormalDistribution.emplace(m_psNormalDistributionPath, pDevice, pContext); // exceprion
-		PointLightBuffer lightBuffer = {};
-		lightBuffer.numPLights.x = (UINT)m_pointLights.size();
-		memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
+	auto& pbrShader = ShaderLoader::get().getPBRShader(pDevice, pContext);
+	PointLightBuffer lightBuffer = {};
+	lightBuffer.numPLights.x = (UINT)m_pointLights.size();
+	memcpy(lightBuffer.lights, m_pointLights.data(), sizeof(PointLight) * m_pointLights.size());
 
-		m_PSNormalDistribution->CreateConstantBuffer(0, &lightBuffer);
-
-	}
+	pbrShader.CreateConstantBuffer(0, &lightBuffer);
 
 	if (!m_pAverageLumenCPUTexture)
 	{
@@ -131,7 +125,7 @@ void LightModel::applyTonemapEffect(
 		m_scaledHDRTargets.resize(1);
 	processTexture(inputRTT, m_scaledHDRTargets[0], pDevice, pContext);
 
-	pContext->PSSetShader(m_PSCopy.Get(), nullptr, 0u);
+	ShaderLoader::get().getCopyTextureShader(pDevice, pContext).Set();
 	for (size_t i = 1; i < m_scaledHDRTargets.size(); i++)
 		processTexture(m_scaledHDRTargets[i - 1], m_scaledHDRTargets[i], pDevice, pContext);
 
@@ -200,7 +194,7 @@ void LightModel::processTexture(
 	pContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());
 
 	m_pScreenQuad->setVS(pDevice, pContext);
-	m_pScreenQuad->render(pDevice, pContext, nullptr);
+	m_pScreenQuad->render(pDevice, pContext);
 	//pContext->PSSetShaderResources(0u, 1u, pSRV);
 }
 

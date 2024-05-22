@@ -1,5 +1,4 @@
 #pragma once
-
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
 #include <vector>
@@ -7,21 +6,13 @@
 #include <memory>
 #include <algorithm>
 #include <DirectXMath.h>
-
 #include "PBR.h"
+#include "BaseException.h"
 
-namespace DX = DirectX;
 class PixelShader
 {
 public:
-	PixelShader(const wchar_t* psPath, Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext)
-		: m_pDevice(pDevice)
-		, m_pContext(pContext)
-	{
-		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-		THROW_IF_FAILED(BaseException, D3DReadFileToBlob(psPath, &pBlob));
-		THROW_IF_FAILED(BaseException, m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pixelShader));
-	}
+	PixelShader(const wchar_t* psPath, Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 	template<typename T>
 	void CreateConstantBuffer(UINT idx, T* pSysMem)
 	{
@@ -41,37 +32,11 @@ public:
 		THROW_IF_FAILED(BaseException, m_pDevice->CreateBuffer(&desc, &sd, &cb));
 		m_constantBuffers[idx] = cb;
 	}
-	void Set()
-	{
-		m_pContext->PSSetShader(m_pixelShader.Get(), nullptr, 0u);
-		SetConstantBuffers();
-	}
-	void SetConstantBuffers()
-	{
-		for (auto bufferPair = m_constantBuffers.begin(); bufferPair != m_constantBuffers.end(); bufferPair++)
-		{
-			auto& idx = bufferPair->first;
-			auto& buffer = bufferPair->second;
-			m_pContext->PSSetConstantBuffers(idx, 1, buffer.GetAddressOf());
-		}
-	}
+	void Set();
+	void SetConstantBuffers();
 protected:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pixelShader;
 	std::map<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>> m_constantBuffers;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& m_pContext;
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
-};
-
-class PBRPixelShader : public PixelShader
-{
-
-public:
-	PBRPixelShader(const wchar_t* psPath, Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
-		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) : PixelShader(psPath, pDevice, pContext)
-	{
-		PixelShader::CreateConstantBuffer(1, &m_params);
-		PixelShader::SetConstantBuffers();
-	};
-private:
-	PBRParams m_params;
 };

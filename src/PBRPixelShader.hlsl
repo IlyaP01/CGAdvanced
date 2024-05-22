@@ -40,21 +40,22 @@ float4 main(PSInput input) : SV_TARGET
 	float3 result = {0.f, 0.f, 0.f};
 	for (uint i = 0; i < plbLenght.r; ++i)
 	{
-		float D = normalDistribution(input.wPos, input.norm, i);
-		float G = geometry(input.wPos, input.norm, i);
-		float3 F = fresnel(input.wPos, input.norm, i);
+		float D = normalDistribution(input.wPos.xyz, input.norm.xyz, i);
+		float G = geometry(input.wPos.xyz, input.norm.xyz, i);
+		float3 F = fresnel(input.wPos.xyz, input.norm.xyz, i);
 		float3 wo = toCamera(input.wPos);
 		float3 l = toLight(i, input.wPos);
-		float3 n = normalize(input.norm);
-
+		float3 n = normalize(input.norm.xyz);
+		float3 result_add = { 0.f, 0.f, 0.f };
 		if (viewMode == pbrMode)
-			result = result + (1 - F) * albedo / PI * (1 - metalness) + D * F * G / (0.001f + 4 * (positiveDot(l, n) * positiveDot(wo, n)));
+			result_add = (1 - F) * albedo / PI * (1 - metalness) + D * F * G / (0.001f + 4 * (positiveDot(l, n) * positiveDot(wo, n)));
 		else if (viewMode == normalMode)
-			result = result + D;
+			result_add = D;
 		else if (viewMode == geometryMode)
-			result = result + G;
+			result_add = G;
 		else if (viewMode == fresnelMode)
-			result = result + F;
+			result_add = F;
+		result += result_add * (dot(l, n) > 0);
 	}
 	return float4(result, 1);
 }

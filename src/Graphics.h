@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "LightModel.h"
+#include "PBR.h"
 
 class Graphics
 {
@@ -24,7 +25,7 @@ public:
 	void ClearBuffer( float red,float green,float blue ) noexcept;
 	void DrawTest(Camera const& viewCamera, float angle, float x, float y);
 	void DrawScene(Scene& scene, Camera const& camera, LightModel& lightModel);
-
+	void setPBRMode(PBRMode mode);
 private:
 
 	void setCamera(Camera const& camera);
@@ -45,4 +46,5 @@ private:
 		int widht;
 		int height;
 	}bufferSize;
+	PBRMode m_mode;
 };

@@ -4,9 +4,9 @@
 
 namespace DX = DirectX;
 
-Cube::Cube(DX::XMVECTOR const& posiiton, float sideSize):
-	m_pVertexBuffer(nullptr)
-	//m_pVIndexBuffer(nullptr)
+Cube::Cube(DX::XMVECTOR const& position, float sideSize, ShaderLoader::ShaderType type)
+	: m_pVertexBuffer(nullptr)
+	, m_type(type)
 {
 	float hufSize = sideSize / 2;
 	m_vertices =
@@ -49,14 +49,17 @@ Cube::Cube(DX::XMVECTOR const& posiiton, float sideSize):
 		0,0,0, 0,0,0,
 	};
 	DX::XMFLOAT3 v2F;
-	DX::XMStoreFloat3(&v2F, posiiton);
+	DX::XMStoreFloat3(&v2F, position);
 	m_transform = DX::XMMatrixTranspose(DX::XMMatrixTranslation(v2F.x, v2F.y, v2F.z));
 }
 
-void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext, PBRPixelShader* pixelShader)
+void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft::WRL::ComPtr<ID3D11DeviceContext>const& pContext)
 {
 	if (m_pVertexBuffer == nullptr)
 		initResource(pDevice, pContext);
+
+	auto& shader = ShaderLoader::get().getShader(m_type, pDevice, pContext);
+	shader.Set();
 
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
@@ -65,11 +68,10 @@ void Cube::render(Microsoft::WRL::ComPtr<ID3D11Device>const& pDevice, Microsoft:
 
 	pContext->IASetVertexBuffers(0u, 1u, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 
-#if USE_PBR_SHADER
-	pixelShader->CreateConstantBuffer(1, &m_pbrParams);
-#endif
-	
-	pixelShader->SetConstantBuffers();
+	if (m_type == ShaderLoader::PBRShader)
+		shader.CreateConstantBuffer(1, &m_pbrParams);
+	shader.SetConstantBuffers();
+
 	pContext->Draw((UINT)m_vIndices.size(), 0u);
 }
 

@@ -1,7 +1,7 @@
 struct VSOut
 {
-	float3 color : Color;
 	float4 pos : SV_Position;
+	float3 color : Color;
 	float4 norm : Normal;
 	float3 wPos : WORLD_POSITION;
 };

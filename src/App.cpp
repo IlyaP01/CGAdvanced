@@ -2,8 +2,11 @@
 #include "App.h"
 #include "Cube.h"
 #include "Sphere.h"
+#include "SkyBox.h"
 
 namespace DX = DirectX;
+
+constexpr const wchar_t* s_envSphereTexturePath = L"..\\..\\src\\data\\sky.jpeg";
 
 App::App()
 	:
@@ -14,6 +17,8 @@ App::App()
 		DX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 {
 	AddSpheresGrid();
+	m_scene.setEnvSphere(90.f, s_envSphereTexturePath);
+
 	m_lightModel.addPointLight(DX::XMVectorSet(1.f, 0.f, -10.f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(0.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
 	m_lightModel.addPointLight(DX::XMVectorSet(-1.f, 0.f, -2.5f, 0.f), DX::XMVectorSet(1, 1, 1, 1), 50);
@@ -34,16 +39,20 @@ int App::Go()
 
 void App::AddSpheresGrid()
 {
-	DX::XMFLOAT3 albedo = { 1, 0.71, 0.29 };
+	DX::XMFLOAT3 albedo = { 1.0f, 0.71f, 0.29f };
 	float radius = 3.f;
 	float step = 1.f;
 	int grid_size = 9;
 	float centerShift = (grid_size / 2) * (2 * radius + step);
-	for (size_t i = 1; i <= 10; ++i)
+	for (UINT i = 1; i <= 10; ++i)
 	{
-		for (size_t j = 1; j <= 10; ++j)
+		for (UINT j = 1; j <= 10; ++j)
 		{
-			m_scene.addDrawable<Sphere>(DX::XMVectorSet(i * (2 * radius + step) + radius - centerShift, j * (2 * radius + step) + radius - centerShift, 70.f, 0.f), radius);
+			m_scene.addPhysicallyDrawable<Sphere>(DX::XMVectorSet(i * (2 * radius + step) + radius - centerShift,
+				j * (2 * radius + step) + radius - centerShift, 70.f, 0.f),
+				radius,
+				ShaderLoader::ShaderType::PBRShader);
+
 			m_scene.setPBRParams((i - 1) * 10 + (j - 1), { albedo, i / 10.f, j / 10.f });
 		}
 	}
@@ -60,7 +69,7 @@ void App::DoFrame()
 	{
 		m_scene.setPBRParams(i, m_wnd.getPBRParams());
 	}
-
+	m_wnd.Gfx().setPBRMode(m_wnd.getPBRMode());
 	m_wnd.Gfx().ClearBuffer( 1.f,1.f,1.f );
 	m_wnd.Gfx().DrawScene(m_scene, m_camera, m_lightModel);
 	m_wnd.mouse.Flush();

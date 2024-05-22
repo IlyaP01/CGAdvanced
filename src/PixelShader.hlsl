@@ -2,10 +2,10 @@ static const uint maxPLights = 3;
 
 struct VSOut
 {
-    float3 color : Color;
-    float4 pos : SV_Position;
-    float4 norm : Normal;
-    float4 wPos : Position1;
+  float4 pos : SV_Position;
+  float3 color : Color;
+  float4 norm : Normal;
+  float4 wPos : Position1;
 };
 
 struct PointLight

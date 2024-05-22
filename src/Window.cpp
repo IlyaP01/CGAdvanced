@@ -151,6 +151,11 @@ PBRParams Window::getPBRParams() const
 	return pbrWidget.GetParams();
 }
 
+PBRMode Window::getPBRMode() const
+{
+	return pbrWidget.GetMode();
+}
+
 LRESULT CALLBACK Window::WndProcWINAPI( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam ) noexcept
 {
 	// retrieve ptr to window instance
