@@ -17,6 +17,7 @@ public:
 	void Rotate(Mouse const& mouse, float dt, int wndW, int wndH);
 
 	DX::XMMATRIX getView() const;
+	DX::XMFLOAT3 getPos() const;
 
 private:
 	DX::XMVECTOR m_pos;

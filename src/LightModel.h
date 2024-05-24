@@ -1,5 +1,6 @@
 #pragma once
 #include <d3d11_1.h>
+#include <optional>
 #include <vector>
 #include <memory>
 #include <DirectXMath.h>
@@ -7,6 +8,7 @@
 #include "ScreenQuad.h"
 #include "RenderTargetTexture.h"
 #include "Timer.h"
+#include "PixelShader.h"
 
 class LightModel
 {
@@ -29,9 +31,10 @@ public:
 
 	void clearLights();
 
+
 private:
-	
-	void initResurce(
+
+	void initResource(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 
@@ -52,15 +55,13 @@ private:
 
 	//Microsoft::WRL::ComPtr<ID3D11VertexShader> m_VSCopy;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSSimple;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSCopy;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSBrightness;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_PSHdr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pPointLightBuffer;
-	static constexpr wchar_t const * const m_psSimplePath  = L"PixelShader.cso";
+	static constexpr wchar_t const* const m_psSimplePath = L"PixelShader.cso";
 	static constexpr wchar_t const* const m_psCopyPath = L"CopyPixelShader.cso";
 	static constexpr wchar_t const* const m_psBrightnessPath = L"BrightnessShader.cso";
 	static constexpr wchar_t const* const m_psHdrPath = L"HDRShader.cso";
-	//static constexpr wchar_t const* const m_vsCopyPath = L"CopyVertexShader.cso";
 
 	// tonemap vars
 	std::unique_ptr<ScreenQuad> m_pScreenQuad;
@@ -72,7 +73,7 @@ private:
 	float m_prevExposure = 0;
 	Timer m_timer;
 	const float m_eyeAdaptationS = .5f;
-	
+
 	struct PointLight
 	{
 		DirectX::XMVECTOR pos;

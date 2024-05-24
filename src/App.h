@@ -14,6 +14,7 @@ public:
 private:
 	void DoFrame();
 	void updateLight();
+	void AddSpheresGrid();
 private:
 	Window m_wnd;
 	Timer m_timer;

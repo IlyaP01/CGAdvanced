@@ -1,20 +1,23 @@
 #pragma once
 #include <vector>
 #include <DirectXMath.h>
-#include "Drawable.h"
+#include "PhysicallyDrawable.h"
+#include "ShaderLoader.h"
 
 namespace DX = DirectX;
 
-class Cube : public Drawable
+class Cube : public PhysicallyDrawable
 {
 public:
-	Cube(DX::XMVECTOR const& posiiton, float sideSize);
+	Cube(DX::XMVECTOR const& position, float sideSize, ShaderLoader::ShaderType type);
 	void render(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext) override;
+	const PBRParams getPBRParams() override;
+	void setPBRParams(PBRParams params) override;
 
 private:
-	void initResurce(
+	void initResource(
 		Microsoft::WRL::ComPtr<ID3D11Device> const& pDevice,
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> const& pContext);
 
@@ -44,5 +47,7 @@ private:
 	std::vector<unsigned short> m_vIndices;
 	std::vector<DX::XMFLOAT3> m_normals;
 	std::vector<unsigned short> m_nIndeces;
-	DX::XMVECTOR m_position;
+	DirectX::XMMATRIX m_transform;
+	PBRParams m_pbrParams;
+	ShaderLoader::ShaderType m_type;
 };

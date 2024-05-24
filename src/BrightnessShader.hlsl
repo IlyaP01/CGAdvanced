@@ -14,5 +14,5 @@ float4 main(PSInput i) : SV_TARGET
 {
 	float4 color = Texture.Sample(TextureSampler, i.texcoord);
 	float brightness = log(dot(color.rgb, ChannelsWeight) + 1.0f);
-	return float4(brightness, brightness, brightness, 1.0f);
+	return float4(brightness, brightness, brightness, 1);
 }

@@ -2,6 +2,7 @@
 #include "WinDef.h"
 #include "BaseException.h"
 #include <d3d11_1.h>
+#include "PixelShader.h"
 
 
 class Drawable
